@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Movies.Business.Services;
 
 namespace Movies.Business
 {
@@ -9,6 +10,9 @@ namespace Movies.Business
         {
             // Options
             services.Configure<Settings.OmdbApi>(configuration.GetSection(nameof(Settings.OmdbApi)));
+
+            // Services
+            services.AddScoped<IMovieService, MovieService>();
         }
     }
 }
