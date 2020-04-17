@@ -25,6 +25,13 @@ namespace Movies.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            // Add MVC, RazorOptions and an additional folder structure for partials
+            services.AddMvc().AddRazorOptions(options =>
+            {
+                options.PageViewLocationFormats.Add("/Pages/Partials/{0}.cshtml");
+            });
+
             services.ConfigureBusinessServices(Configuration);
         }
 

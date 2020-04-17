@@ -1,4 +1,4 @@
-﻿@model Movies.Web.Models.Movies.SearchResult
+﻿@model Movies.Web.Models.Movies.MovieSummary
 
 <div class="col-lg-3 col-md-4 col-sm-6">
     <article class="card">
@@ -10,7 +10,7 @@
                 <img src="@Model.ImageUrl" alt="Movie" class="w-100">
             </div>
             <p class="tagline card-text text-xs-center">@Model.Year</p>
-            <a href="@Url.Action("~/Views/Movies/Detail")" class="btn btn-primary btn-block"><i class="fa fa-eye"></i> View Details</a>
+            <a href="@Url.Action("~Views/Movies/Detail")" class="btn btn-primary btn-block"><i class="fa fa-eye"></i> View Details</a>
         </div>
     </article>
 </div>

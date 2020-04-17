@@ -20,6 +20,9 @@ namespace Movies.Business.Services
 
         public Task<MovieSearchResults> GetMovieSearchResults(string searchTitle, string year = null)
         {
+            if (string.IsNullOrWhiteSpace(searchTitle))
+                return Task.FromResult<MovieSearchResults>(null);
+
             var apiClient = GetOmdbApiClient();
             return apiClient.GetMovieSearchResults(searchTitle, year);
         }
