@@ -2,7 +2,7 @@
 @model Movies.Web.Models.Movies.MovieSearchResults
 
 @{
-    ViewData["Title"] = "Search Results";
+  ViewData["Title"] = "Search Results";
 }
 
 <section class="movies" id="movies">
@@ -26,8 +26,17 @@
   </div>
 </section>
 
-@section scripts
+@section Scripts
 {
   @await Html.PartialAsync("Partials/_ValidationScriptsPartial")
-  @* TODO: Use Html.Raw() on serialized JSON within json-ld script *@
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.MoveListingStructuredData))
+{
+  @section StructuredData
+  {
+    <script type="application/ld+json">
+      @Html.Raw(Model.MoveListingStructuredData)
+    </script>
+  }
 }

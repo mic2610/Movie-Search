@@ -10,6 +10,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Movies.Business;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 
 namespace Movies.Web
 {
@@ -26,13 +29,21 @@ namespace Movies.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAutoMapper(typeof(Startup));
-            services.AddControllersWithViews();
+
+            services.AddControllersWithViews()
+                .AddNewtonsoftJson();
 
             // Add MVC, RazorOptions and an additional folder structure for partials
             services.AddMvc().AddRazorOptions(options =>
             {
                 options.PageViewLocationFormats.Add("/Pages/Partials/{0}.cshtml");
             });
+
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                NullValueHandling = NullValueHandling.Ignore
+            };
 
             services.ConfigureBusinessServices(Configuration);
         }

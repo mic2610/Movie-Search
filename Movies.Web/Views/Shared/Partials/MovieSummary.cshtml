@@ -1,6 +1,7 @@
 ﻿@model Movies.Web.Models.Movies.MovieSummary
 
-<div class="col-lg-3 col-md-4 col-sm-6">
+@* imdbID is set as an action for structured data from a carousel to identify and access each item *@
+<div class="col-lg-3 col-md-4 col-sm-6" id="@Model.imdbID">
     <article class="card">
         <header class="title-header">
             <h3>@Model.Title</h3>

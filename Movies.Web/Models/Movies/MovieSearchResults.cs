@@ -14,5 +14,7 @@ namespace Movies.Web.Models.Movies
         public string Title { get; set; }
 
         public string Year { get; set; }
+
+        public string MoveListingStructuredData { get; set; }
     }
 }
