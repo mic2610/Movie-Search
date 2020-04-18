@@ -26,28 +26,28 @@ namespace Movies.Web.Controllers
             _mapper = mapper;
         }
 
-        public async Task<IActionResult> Index(string title = "Avengers")
-        {
-            var model = await GetMovieSearchResults(title);
-            return View(model);
-        }
-
-        public async Task<IActionResult> SearchResults(string title = "Avengers", string year = null, int page = 1)
+        public async Task<IActionResult> Index(string title = "Avengers", string year = null, int page = 1)
         {
             var model = await GetMovieSearchResults(title, year, page);
             return View(model);
         }
 
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(string id, string searchResultsUrl)
         {
-            var movie = await _movieService.GetMovie(id);
-            if (movie == null)
+            var movieDto = await _movieService.GetMovie(id);
+            if (movieDto == null)
                 return NotFound();
 
-            var model = _mapper.Map<Business.Models.Movie, Web.Models.Movies.Movie>(movie);
-            var movieStructuredData = BuildMovie(movie);
-            model.MoveStructuredData = movieStructuredData != null ? JsonConvert.SerializeObject(movieStructuredData) : null;
-            return View(model);
+            var movieStructuredData = BuildMovie(movieDto);
+            var movie = _mapper.Map<Business.Models.Movie, Web.Models.Movies.Movie>(movieDto);
+            var movieDetails = new MovieDetails
+            {
+                MoveStructuredData = movieStructuredData != null ? JsonConvert.SerializeObject(movieStructuredData) : null,
+                Movie = movie,
+                SearchResultsUrl = searchResultsUrl
+            };
+
+            return View(movieDetails);
         }
 
         private async Task<MovieSearchResults> GetMovieSearchResults(string title, string year = null, int page = 1)
@@ -59,9 +59,9 @@ namespace Movies.Web.Controllers
             return new MovieSearchResults
             {
                 // Pass movies into a PageCollection, there is no need to skip using .Skip() or take using .Take() as it is handled by the API
-                Movies = movieSearchResults != null
+                Movies = movieSearchResults != null && !movieSearchResults.Search.IsNullOrEmpty()
                     ? new PagedCollection<MovieSummary>(
-                        movieSearchResults.Search?.Select(m => new MovieSummary { ImageUrl = m.Poster, imdbID = m.imdbID, Title = m.Title, Year = m.Year }),
+                        movieSearchResults.Search?.Select(m => new MovieSummary { ImageUrl = m.Poster, imdbID = m.imdbID, Title = m.Title, Year = m.Year, SearchResultsUrl = Url.Action(nameof(Index), new { title = title, year = year, page = page }) }),
                         page,
                         pageSize,
                         !string.IsNullOrWhiteSpace(movieSearchResults.TotalResults) ? Convert.ToInt32(movieSearchResults.TotalResults) : (int?)null)
@@ -87,10 +87,10 @@ namespace Movies.Web.Controllers
             var positionIncrement = 0;
 
             // Absolute url
-            //var searchResultsUrl = Url.AbsoluteAction(nameof(SearchResults), "Movies");
+            //var searchResultsUrl = Url.AbsoluteAction(nameof(Index), "Movies");
 
             // Relative Url was used instead of the above absolute as the above absolute url was not valid within the testing tool: https://search.google.com/structured-data/testing-tool
-            var searchResultsUrl = Url.Action(nameof(SearchResults), "Movies");
+            var searchResultsUrl = Url.Action(nameof(Index), "Movies");
             foreach (var movieSummary in movieSummaries)
             {
                 movieListing.ItemListElement.Add(new ItemListElement
@@ -105,6 +105,8 @@ namespace Movies.Web.Controllers
 
                         // Movie summary only has a single year, so to avoid warnings within the structured data testing tool: https://search.google.com/structured-data/testing-tool , we must place defaults for the dateCreated
                         DateCreated = $"{movieSummary.Year}-01-01",
+
+                        // Url must be unique for each result using the action tag
                         Url = $"{searchResultsUrl}#{movieSummary.imdbID}"
                     }
                 });

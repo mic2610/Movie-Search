@@ -11,5 +11,7 @@
         public string Type { get; set; }
 
         public string ImageUrl { get; set; }
+        
+        public string SearchResultsUrl { get; set; }
     }
 }

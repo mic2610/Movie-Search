@@ -2,16 +2,19 @@
 
 @* imdbID is set as an action for structured data from a carousel to identify and access each item *@
 <div class="col-lg-3 col-md-4 col-sm-6" id="@Model.imdbID">
-    <article class="card">
-        <header class="title-header">
-            <h3>@Model.Title</h3>
-        </header>
-        <div class="card-block">
-            <div class="img-card">
-                <img src="@Model.ImageUrl" alt="Movie" class="w-100">
-            </div>
-            <p class="tagline card-text text-xs-center">@Model.Year</p>
-            <a href="@Url.Action("Details", new { id = Model.imdbID })" class="btn btn-primary btn-block"><i class="fa fa-eye"></i> View Details</a>
+  <article class="card">
+    <header class="title-header">
+      <h3>@Model.Title</h3>
+    </header>
+    <div class="card-block">
+      <a asp-action="Details" asp-route-id="@Model.imdbID" asp-route-searchResultsUrl="@Model.SearchResultsUrl" class="btn btn-primary btn-block">
+        <i class="fa fa-eye"></i>
+        <div class="img-card">
+          <img src="@Model.ImageUrl" alt="Movie" class="w-100">
         </div>
-    </article>
+        <p class="tagline card-text text-xs-center">@Model.Year</p>
+        View Details
+      </a>
+    </div>
+  </article>
 </div>
