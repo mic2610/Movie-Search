@@ -15,13 +15,13 @@ namespace Movies.Business.Api
             _key = key;
         }
 
-        public Task<MovieSearchResults> GetMovieSearchResults(string searchTitle, string year = null)
+        public Task<MovieSearchResults> GetMovieSearchResults(string searchTitle, string year = null, int pageNumber = 1)
         {
             if (string.IsNullOrWhiteSpace(searchTitle))
                 return Task.FromResult<MovieSearchResults>(null);
 
             // Only query year if it has been passed in
-            var query = $"{_baseUrl}?apikey={_key}&s={searchTitle}{(!string.IsNullOrWhiteSpace(year) ? $"&y={year}" : string.Empty)}";
+            var query = $"{_baseUrl}?apikey={_key}&s={searchTitle}&page={pageNumber}{(!string.IsNullOrWhiteSpace(year) ? $"&y={year}" : string.Empty)}";
             return GetAsync<MovieSearchResults>(query);
         }
 

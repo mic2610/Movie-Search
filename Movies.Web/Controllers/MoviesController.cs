@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Movies.Business.Services;
+using Movies.Core.Collections;
 using Movies.Core.Extensions;
 using Movies.Web.Extensions;
 using Movies.Web.Models.Movies;
@@ -30,9 +32,9 @@ namespace Movies.Web.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> SearchResults(string title, string year = null)
+        public async Task<IActionResult> SearchResults(string title, string year = null, int page = 1)
         {
-            var model = await GetMovieSearchResults(title, year);
+            var model = await GetMovieSearchResults(title, year, page);
             return View(model);
         }
 
@@ -48,15 +50,22 @@ namespace Movies.Web.Controllers
             return View(model);
         }
 
-        private async Task<MovieSearchResults> GetMovieSearchResults(string title, string year = null)
+        private async Task<MovieSearchResults> GetMovieSearchResults(string title, string year = null, int page = 1)
         {
-            var movieSearchResults = await _movieService.GetMovieSearchResults(title, year);
+            var movieSearchResults = await _movieService.GetMovieSearchResults(title, year, page);
             var movieListing = movieSearchResults != null ? BuildMovieListing(movieSearchResults.Search) : null;
             var moveListingStructuredData = movieListing != null ? JsonConvert.SerializeObject(movieListing) : null;
+            var pageSize = 10;
             return new MovieSearchResults
             {
-                Movies = movieSearchResults?.Search?.Select(m => new MovieSummary { ImageUrl = m.Poster, imdbID = m.imdbID, Title = m.Title, Year = m.Year }).ToList(),
-                TotalResults = movieSearchResults?.TotalResults,
+                // Pass movies into a PageCollection, there is no need to skip using .Skip() or take using .Take() as it is handled by the API
+                Movies = movieSearchResults != null
+                    ? new PagedCollection<MovieSummary>(
+                        movieSearchResults.Search?.Select(m => new MovieSummary { ImageUrl = m.Poster, imdbID = m.imdbID, Title = m.Title, Year = m.Year }),
+                        page,
+                        pageSize,
+                        !string.IsNullOrWhiteSpace(movieSearchResults.TotalResults) ? Convert.ToInt32(movieSearchResults.TotalResults) : (int?)null)
+                    : null,
                 Year = year,
                 Title = title,
                 MoveListingStructuredData = moveListingStructuredData

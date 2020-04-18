@@ -26,6 +26,21 @@
   </div>
 </section>
 
+<a asp-action="SearchResults"
+   asp-route-title="@Model.Title"
+   asp-route-year="@Model.Year"
+   asp-route-pageNumber="@(Model.Movies.PageNumber - 1)"
+   class="btn btn-default @(!Model.Movies.HasPreviousPage ? "disabled" : "")">
+  Previous
+</a>
+<a asp-action="SearchResults"
+   asp-route-title="@Model.Title"
+   asp-route-year="@Model.Year"
+   asp-route-page="@(Model.Movies.PageNumber + 1)"
+   class="btn btn-default @(!Model.Movies.HasNextPage ? "disabled" : "")">
+  Next
+</a>
+
 @section Scripts
 {
   @await Html.PartialAsync("Partials/_ValidationScriptsPartial")

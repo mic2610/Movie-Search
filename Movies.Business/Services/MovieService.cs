@@ -18,13 +18,13 @@ namespace Movies.Business.Services
             _omdbApiSettings = omdbApiSettings.Value;
         }
 
-        public Task<MovieSearchResults> GetMovieSearchResults(string searchTitle, string year = null)
+        public Task<MovieSearchResults> GetMovieSearchResults(string searchTitle, string year = null, int pageNumber = 1)
         {
             if (string.IsNullOrWhiteSpace(searchTitle))
                 return Task.FromResult<MovieSearchResults>(null);
 
             var apiClient = GetOmdbApiClient();
-            return apiClient.GetMovieSearchResults(searchTitle, year);
+            return apiClient.GetMovieSearchResults(searchTitle, year, pageNumber);
         }
 
         public Task<Movie> GetMovie(string id)
