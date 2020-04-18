@@ -15,10 +15,5 @@ namespace Movies.Web.Models.Movies
         public string Year { get; set; }
 
         public string MoveListingStructuredData { get; set; }
-
-        // Pagination properties
-        //public int PageNumber { get; set; }
-
-        //public string TotalResults { get; set; }
     }
 }

@@ -29,7 +29,7 @@
 <a asp-action="SearchResults"
    asp-route-title="@Model.Title"
    asp-route-year="@Model.Year"
-   asp-route-pageNumber="@(Model.Movies.PageNumber - 1)"
+   asp-route-page="@(Model.Movies.PageNumber - 1)"
    class="btn btn-default @(!Model.Movies.HasPreviousPage ? "disabled" : "")">
   Previous
 </a>

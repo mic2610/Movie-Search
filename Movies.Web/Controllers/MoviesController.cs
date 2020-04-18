@@ -26,13 +26,13 @@ namespace Movies.Web.Controllers
             _mapper = mapper;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string title = "Avengers")
         {
-            var model = await GetMovieSearchResults("Avengers");
+            var model = await GetMovieSearchResults(title);
             return View(model);
         }
 
-        public async Task<IActionResult> SearchResults(string title, string year = null, int page = 1)
+        public async Task<IActionResult> SearchResults(string title = "Avengers", string year = null, int page = 1)
         {
             var model = await GetMovieSearchResults(title, year, page);
             return View(model);
