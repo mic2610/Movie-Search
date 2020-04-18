@@ -6,8 +6,8 @@ namespace Movies.Web.Mappings
     {
         public MovieProfile()
         {
-            CreateMap<Business.Models.Rating, Models.Movies.Rating>();
-            CreateMap<Business.Models.Movie, Models.Movies.Movie>();
+            CreateMap<Business.Models.Movie, Models.Movies.Movie>()
+                .ForMember(dest => dest.MoveStructuredData, opt => opt.Ignore());
         }
     }
 }

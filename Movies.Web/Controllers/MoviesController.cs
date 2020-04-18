@@ -9,6 +9,7 @@ using Movies.Web.Extensions;
 using Movies.Web.Models.Movies;
 using Movies.Web.Models.StructuredData;
 using Newtonsoft.Json;
+using Movie = Movies.Business.Models.Movie;
 
 namespace Movies.Web.Controllers
 {
@@ -42,6 +43,8 @@ namespace Movies.Web.Controllers
                 return NotFound();
 
             var model = _mapper.Map<Business.Models.Movie, Web.Models.Movies.Movie>(movie);
+            var movieStructuredData = BuildMovie(movie);
+            model.MoveStructuredData = movieStructuredData != null ? JsonConvert.SerializeObject(movieStructuredData) : null;
             return View(model);
         }
 
@@ -85,13 +88,13 @@ namespace Movies.Web.Controllers
                 {
                     Type = "ListItem",
                     Position = $"{++positionIncrement}",
-                    Item = new Item
+                    Item = new MovieItem
                     {
                         Name = movieSummary.Title,
                         Type = "Movie",
                         Image = movieSummary.Poster,
 
-                        // Movie summary only has a single year, so to avoid warnings within the structured data testing tool: https://search.google.com/structured-data/testing-tool , we must place defaults for teh dateCreated
+                        // Movie summary only has a single year, so to avoid warnings within the structured data testing tool: https://search.google.com/structured-data/testing-tool , we must place defaults for the dateCreated
                         DateCreated = $"{movieSummary.Year}-01-01",
                         Url = $"{searchResultsUrl}#{movieSummary.imdbID}"
                     }
@@ -99,6 +102,24 @@ namespace Movies.Web.Controllers
             }
 
             return movieListing;
+        }
+
+        private MovieItem BuildMovie(Movie movie)
+        {
+            if (movie == null)
+                return null;
+
+            return new MovieItem
+            {
+                Context = "http://schema.org",
+                Type = "Movie",
+                Name = movie.Title,
+                Image = movie.Poster,
+                DateCreated = movie.Released,
+                Director = new Director { Name = movie.Director, Type = "Person" },
+                Url = $"{Url.Action(nameof(Details), "Movies", new { id = movie.imdbID })}#{movie.imdbID}",
+                Description = movie.Plot
+            };
         }
     }
 }

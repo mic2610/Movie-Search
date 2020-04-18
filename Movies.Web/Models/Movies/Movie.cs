@@ -43,5 +43,7 @@ namespace Movies.Web.Models.Movies
         public string Website { get; set; }
 
         public string Response { get; set; }
+        
+        public string MoveStructuredData { get; set; }
     }
 }
