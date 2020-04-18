@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Movies.Business;
@@ -10,12 +11,13 @@ namespace Movies.Web.Controllers
 {
     public class MoviesController : Controller
     {
-        // Options
         private readonly IMovieService _movieService;
+        private readonly IMapper _mapper;
 
-        public MoviesController(IMovieService movieService)
+        public MoviesController(IMovieService movieService, IMapper mapper)
         {
             _movieService = movieService;
+            _mapper = mapper;
         }
 
         public async Task<IActionResult> Index()
@@ -30,6 +32,16 @@ namespace Movies.Web.Controllers
             return View(model);
         }
 
+        public async Task<IActionResult> Details(string id)
+        {
+            var movie = await _movieService.GetMovie(id);
+            if (movie == null)
+                return NotFound();
+
+            var model = _mapper.Map<Business.Models.Movie, Web.Models.Movies.Movie>(movie);
+            return View(model);
+        }
+
         private async Task<MovieSearchResults> GetMovieSearchResults(string title, string year = null)
         {
             var movieSearchResults = await _movieService.GetMovieSearchResults(title, year);
@@ -40,11 +52,6 @@ namespace Movies.Web.Controllers
                 Year = year,
                 Title = title
             };
-        }
-
-        public IActionResult Details()
-        {
-            return View();
         }
     }
 }

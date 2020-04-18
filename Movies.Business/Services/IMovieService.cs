@@ -6,5 +6,6 @@ namespace Movies.Business.Services
     public interface IMovieService
     {
         Task<MovieSearchResults> GetMovieSearchResults(string searchTitle, string year = null);
+        Task<Movie> GetMovie(string id);
     }
 }

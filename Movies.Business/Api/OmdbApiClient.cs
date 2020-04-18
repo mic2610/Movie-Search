@@ -24,5 +24,7 @@ namespace Movies.Business.Api
             var query = $"{_baseUrl}?apikey={_key}&s={searchTitle}{(!string.IsNullOrWhiteSpace(year) ? $"&y={year}" : string.Empty)}";
             return GetAsync<MovieSearchResults>(query);
         }
+
+        public Task<Movie> GetMovie(string id) => !string.IsNullOrWhiteSpace(id) ? GetAsync<Movie>($"{_baseUrl}?apikey={_key}&i={id}") : Task.FromResult<Movie>(null);
     }
 }

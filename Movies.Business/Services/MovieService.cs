@@ -27,6 +27,15 @@ namespace Movies.Business.Services
             return apiClient.GetMovieSearchResults(searchTitle, year);
         }
 
+        public Task<Movie> GetMovie(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+                return Task.FromResult<Movie>(null);
+
+            var apiClient = GetOmdbApiClient();
+            return apiClient.GetMovie(id);
+        }
+
         private OmdbApiClient GetOmdbApiClient()
         {
             return _omdbApiClient ?? (_omdbApiClient = new OmdbApiClient(_omdbApiSettings.BaseUrl, _omdbApiSettings.Key));
