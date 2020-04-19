@@ -1,6 +1,6 @@
 Design Choices and Architecture:
 
-Movies solution has been developed in .NET Core 3.1 using the existing boilerplate with many modifications. It has been developed using the Onion architecture consisting of the following in order from the inner most layer to the outer most layer:
+The WhistleOut Movies solution has been developed in .NET Core 3.1 using the existing boilerplate with many modifications. It has been developed using the Onion architecture consisting of the following in order from the inner most layer to the outer most layer:
 
 1) Movies.Core
 2) Movies.Data
@@ -20,6 +20,10 @@ Business design choices:
 The ondm api is accessed through a an OmdbApiClient.cs class in Movies.Business, then instantiated within MovieService with keys passed in through appsettings.json, these are injected in using the .NET Core IOptions services. JSON returned from the API is then mapped to POCO casses within Movies.Business and then these are mapped into models within Movies.Web. In some cases they are mapped using AutoMapper, only if the mapping profile is basic and does not need many modifications. These models are then passed down into the Razor pages using .NET Core MVC. Structured Data is also JSON serialised using NewtonSoft.net and passed into the head of ever HTML page using the .NET @section tag.
 
 Validation is carried out on the Search Form, which ensures that at least three characters are entered into the Title search field, if no values are returned, safe null or empty checks are performed on the movies search results. Furthermore, ASP.NET Core Tag helpers are used to map values to route queries in the controller, pagination is used, with selected movies even retaining a return url back to search results.
+
+Tasks:
+
+All core tasks are complete and all structured JSON-LD has been tested using https://search.google.com/structured-data/testing-tool , bonus tasks have also been completed and tested. Pagination retains the current query and any searches reset pagination as it is assumed a new search term will essentially restart it all. The Super Bonus Task to develop an auto complete was not finished, but React, alongside ReactJs.NET, were setup for future development.
 
 TESTING:
 Structured Data has been tested using https://search.google.com/structured-data/testing-tool and has returned no errors
