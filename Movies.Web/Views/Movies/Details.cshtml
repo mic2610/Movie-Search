@@ -148,12 +148,17 @@
     <dd class="col-sm-10">
       @Html.DisplayFor(model => Model.Movie.Type)
     </dd>
-    <dt class="col-sm-2">
-      @Html.DisplayNameFor(model => Model.Movie.ImageUrl)
-    </dt>
-    <dd class="col-sm-10">
-      @Html.DisplayFor(model => Model.Movie.ImageUrl)
-    </dd>
+    @if (!string.IsNullOrWhiteSpace(Model.Movie.ImageUrl))
+    {
+      <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => Model.Movie.ImageUrl)
+      </dt>
+      <dd class="col-sm-10">
+        <div class="img-card">
+          <img src="@Model.Movie.ImageUrl" alt="Movie" class="w-100">
+        </div>
+      </dd>
+    }
   </dl>
 </div>
 <div>
@@ -161,6 +166,8 @@
     Back to Search
   </a>
 </div>
+
+<div id="comments"></div>
 
 @if (!string.IsNullOrWhiteSpace(Model.MoveStructuredData))
 {
@@ -170,4 +177,12 @@
       @Html.Raw(Model.MoveStructuredData)
     </script>
   }
+}
+
+@section Scripts
+{
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/16.13.0/umd/react.development.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.13.0/umd/react-dom.development.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/remarkable/1.7.1/remarkable.min.js"></script>
+  <script src="@Url.Content("~/js/comments.jsx")"></script>
 }
