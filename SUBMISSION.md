@@ -1,3 +1,7 @@
+Setup
+1) Ensure that the .NET Core 3.0 SDK is installed and setup for compilation through Visual Studio 2013
+2) Replace the JSON value OmdbApi.Key with another valid API key, this is located within Movies.Web/appsettings.json 
+
 Design Choices and Architecture:
 
 Movies solution has been developed in .NET Core 3.1 using the existing boilerplate with many modifications. It has been developed using the Onion architecture consisting of the following in order from the inner most layer to the outer most layer:
