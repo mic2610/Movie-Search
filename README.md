@@ -12,24 +12,25 @@ Setup
 * Movie details page with movie structured data for the displayed movie details in JSON-LD format. More guidelines are here https://developers.google.com/search/docs/data-types/movie#movie
 * Pagination on all search results
 
-Design Choices and Architecture:
+# Design Choices and Architecture:
 
 Movies solution has been developed in .NET Core 3.1 using the existing boilerplate with many modifications. It has been developed using the Onion architecture consisting of the following in order from the inner most layer to the outer most layer:
 
-1) Movies.Core
-2) Movies.Data
-3) Movies.Business
-4) Movies.Web
+* 1) Movies.Core
+* 2) Movies.Data
+* 3) Movies.Business
+* 4) Movies.Web
 
 This allows more moduler and cleaner code to be written and it also avoids any issues in Dependency Injection such as a circular dependency from when two services attempt to access each other. Furthermore this solution also uses SOLID principles:
 
-S - Single-responsiblity principle in the form of Individual services for a responsibility such as MovieService which is then injected into MovieController
-O - Open-closed principle: static extensions such as IEnumerableExtensions
-L - Liskov substitution principle: inheritance of IEnumerable for PagedCollection in Movies.Core
-I - Interface segregation principle: use of Interfaces for services as well as IPagedCollection
-D - Dependency Inversion Principle: Use of injected services into controllers such as MovieController
+# SOLID Implementation:
+* S - Single-responsiblity principle in the form of Individual services for a responsibility such as MovieService which is then injected into MovieController
+* O - Open-closed principle: static extensions such as IEnumerableExtensions
+* L - Liskov substitution principle: inheritance of IEnumerable for PagedCollection in Movies.Core
+* I - Interface segregation principle: use of Interfaces for services as well as IPagedCollection
+* D - Dependency Inversion Principle: Use of injected services into controllers such as MovieController
 
-Business design choices:
+# Business design choices:
 
 The ondm api is accessed through a an OmdbApiClient.cs class in Movies.Business, then instantiated within MovieService with keys passed in through appsettings.json, these are injected in using the .NET Core IOptions services. JSON returned from the API is then mapped to POCO casses within Movies.Business and then these are mapped into models within Movies.Web. In some cases they are mapped using AutoMapper, only if the mapping profile is basic and does not need many modifications. These models are then passed down into the Razor pages using .NET Core MVC. Structured Data is also JSON serialised using NewtonSoft.net and passed into the head of ever HTML page using the .NET @section tag.
 
