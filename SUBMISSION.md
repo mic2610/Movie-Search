@@ -1,6 +1,6 @@
 Setup
 1) Ensure that the .NET Core 3.0 SDK is installed and setup for compilation through Visual Studio 2019
-2) Replace the JSON value OmdbApi.Key with another valid API key, this is located within Movies.Web/appsettings.json 
+2) Replace the JSON value OmdbApi.Key with another valid API key attained from http://www.omdbapi.com/apikey.aspx, this is located within Movies.Web/appsettings.json 
 
 Design Choices and Architecture:
 

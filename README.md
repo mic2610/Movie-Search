@@ -1,33 +1,46 @@
-Whistleout .NET Engineer Technical Task
+Paginated Movie Search with Structured Data
 =======================================
-The purpose of this task is to assess your technical skills and get an idea on how you approach a problem. We know that you might not have a lot of time to devote to this task so please work on the Core Task Details and the rest of them if you have time.
 
-# Core Task Details:
-Your task is to create the following:
-* A movie search results page to search for movies by title using the omdbapi. Example  http://www.omdbapi.com/?apikey=[yourkey]&s=Avengers. Ensure any criteria used to search movies is in the query string of the movie search results page.
+Setup
+1) Ensure that the .NET Core 3.0 SDK is installed and setup for compilation through Visual Studio 2019
+2) Replace the JSON value OmdbApi.Key with another valid API key attained from http://www.omdbapi.com/apikey.aspx, this is located within Movies.Web/appsettings.json 
+
+# Features:
+* A movie search results page to search for movies by title using the omdbapi. Example  http://www.omdbapi.com/?apikey=[yourkey]&s=Avengers
 * A movie details page displaying more details about a movie using the omdbapi. Example http://www.omdbapi.com/?apikey=[yourkey]&i=tt4154756
-* Mark up the movie search results page with movie carousel structured data for the current displayed movies. Make sure the structured data is in JSON-LD format. More guidelines are here https://developers.google.com/search/docs/data-types/movie#summary
-* Mark up the movie details page with movie structured data for the displayed movie details. Make sure the structured data is in JSON-LD format. More guidelines are here https://developers.google.com/search/docs/data-types/movie#movie
+* Movie search results page with movie carousel structured data for the current displayed movies in JSON-LD format. More guidelines are here https://developers.google.com/search/docs/data-types/movie#summary
+* Movie details page with movie structured data for the displayed movie details in JSON-LD format. More guidelines are here https://developers.google.com/search/docs/data-types/movie#movie
+* Pagination on all search results
 
-## Notes:
-Structured data in JSON-LD should be generated in the html head section. More details about them are available here https://developers.google.com/search/docs/guides/intro-structured-data. You can validate your structured data using the tool https://search.google.com/structured-data/testing-tool
+Design Choices and Architecture:
 
-# Getting Started:
-We have provided a boilerplate code that displays movies from a hard coded set of data. Feel free to use this and build upon it. You are NOT REQUIRED to use this and feel free to start a solution from scratch. Make sure this is done in .NET.
+Movies solution has been developed in .NET Core 3.1 using the existing boilerplate with many modifications. It has been developed using the Onion architecture consisting of the following in order from the inner most layer to the outer most layer:
 
-# Bonus Task:
-* Add a control to search movies by an year range in addition to the title in search results page. Make sure this is part of the query string as well.
-* Implement paging on the movie search results page
+1) Movies.Core
+2) Movies.Data
+3) Movies.Business
+4) Movies.Web
 
-# Super Bonus Task:
-Use a React component in movie details page to implement an autocomplete to quickly navigate to a different movie details. The autocomplete will pull details using the omdb api http://www.omdbapi.com/?apikey=[yourkey]&s=[text]
+This allows more moduler and cleaner code to be written and it also avoids any issues in Dependency Injection such as a circular dependency from when two services attempt to access each other. Furthermore this solution also uses SOLID principles:
+
+S - Single-responsiblity principle in the form of Individual services for a responsibility such as MovieService which is then injected into MovieController
+O - Open-closed principle: static extensions such as IEnumerableExtensions
+L - Liskov substitution principle: inheritance of IEnumerable for PagedCollection in Movies.Core
+I - Interface segregation principle: use of Interfaces for services as well as IPagedCollection
+D - Dependency Inversion Principle: Use of injected services into controllers such as MovieController
+
+Business design choices:
+
+The ondm api is accessed through a an OmdbApiClient.cs class in Movies.Business, then instantiated within MovieService with keys passed in through appsettings.json, these are injected in using the .NET Core IOptions services. JSON returned from the API is then mapped to POCO casses within Movies.Business and then these are mapped into models within Movies.Web. In some cases they are mapped using AutoMapper, only if the mapping profile is basic and does not need many modifications. These models are then passed down into the Razor pages using .NET Core MVC. Structured Data is also JSON serialised using NewtonSoft.net and passed into the head of ever HTML page using the .NET @section tag.
+
+Validation is carried out on the Search Form, which ensures that at least three characters are entered into the Title search field, if no values are returned, safe null or empty checks are performed on the movies search results. Furthermore, ASP.NET Core Tag helpers are used to map values to route queries in the controller, pagination is used, with selected movies even retaining a return url back to search results.
+
+TESTING:
+Structured Data has been tested using https://search.google.com/structured-data/testing-tool and has returned no errors
+
+Michael Ayoub
+GitHub: mic2610
+email: ayoubmichaelwork@gmail.com
 
 # Dependencies:
-This task requires you to register for an API key from http://www.omdbapi.com/apikey.aspx to use their API. Make sure the API key can be configured from web.config or some configuration. DO NOT ADD YOUR API KEY TO SOURCE CONTROL. We will use our key to test your solution.
-
-# Evaluation Criteria:
-Evaluation is based on clean coding skills, design & problem solving skills and easy maintenance of solution.
-
-# Submission:
-Document the solution with design choices you made and any assumptions in SUBMISSION.md. Also include any instructions on any other setup required to run the solution.
-After you have finished the solution please upload to a public Github repo and share the link with jobsau@whistleout.com
+Register for an API key from http://www.omdbapi.com/apikey.aspx and palce it within appsettings.json
